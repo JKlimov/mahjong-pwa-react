@@ -1,26 +1,57 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Draggable from 'react-draggable';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import MJd1 from './MJ Tiles/MJd1-.svg';
+
+class App extends React.Component {
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <Tile/>
+        </header>
+      </div>
+    );
+  }
+}
+
+class Tile extends React.Component {
+  state = {
+    controlledPosition: {
+      x: 0, y: 0
+    }
+  }
+
+  onControlledDragStop = (e, position) => {
+    this.onControlledDrag(e, position);
+    this.onStop(e, position);
+  };
+
+  onControlledDrag = (e, position) => {
+    const {x, y} = position;
+    this.setState({controlledPosition: {x, y}});
+  };
+
+  onStop = (e, position) => {
+    const {x, y} = position;
+    if (y > 0) {
+      this.setState({controlledPosition: {x: 0, y: 0}});
+    } else {
+      this.setState({controlledPosition: {x: 0, y: -300}});
+    }
+  };
+
+  render() {
+    return (
+      <Draggable
+      bounds="header"
+      position={this.state.controlledPosition}
+      onStop={this.onControlledDragStop}>
+        <img src={MJd1} width={100} draggable="false" alt="MJd1" />
+      </Draggable>
+    )
+  }
 }
 
 export default App;
