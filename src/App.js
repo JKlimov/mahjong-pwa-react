@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { TilesContext } from './tilesContext'
 import './App.css';
 import Draggable from 'react-draggable';
 import SvgIcon from '@material-ui/core/SvgIcon';
@@ -98,10 +99,17 @@ const App = () => {
   const [p1hand, setp1hand] = useState(drawHand(deck));
   const [centerTiles, setCenterTiles] = useState([]);
 
+  const tileLocations = {
+    p1hand: p1hand,
+    setp1hand: setp1hand
+  }
+
   return (
     <div className="App">
       <header className="App-header">
-        <Hand tiles={p1hand}/>
+        <TilesContext.Provider value={tileLocations}>
+          <Hand/>
+        </TilesContext.Provider>
       </header>
     </div>
   );
@@ -116,10 +124,14 @@ const Tile = ({name, location}) => {
   }
   const [controlledPosition, setControlledPosition] = useState({x: 0, y: yInitial});
 
+  const tiles = useContext(TilesContext)
+
   const onStop = (e, position) => {
     const {x, y} = position;
     if (y < 200) {
-      setControlledPosition({x:0, y:0});
+      //setControlledPosition({x:0, y:0});
+      const tileIndex = tiles.p1hand.indexOf(name);
+      tiles.setp1hand(tileIndex > -1 ? [...tiles.p1hand.slice(0, tileIndex), ...tiles.p1hand.slice(tileIndex + 1)] : tiles.p1hand);
     } else {
       setControlledPosition({x:0, y:300});
     }
@@ -136,10 +148,12 @@ const Tile = ({name, location}) => {
   )
 }
 
-const Hand = ({tiles}) => {
+const Hand = () => {
+  const tiles = useContext(TilesContext)
+
   return (
     <div>
-      {tiles.map(name =>
+      {tiles.p1hand.map(name =>
         <Tile name={name} location={1}/>
       )} 
     </div>
