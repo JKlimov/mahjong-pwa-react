@@ -99,16 +99,19 @@ const App = () => {
   const [p1hand, setp1hand] = useState(drawHand(deck));
   const [centerTiles, setCenterTiles] = useState([]);
 
-  const tileLocations = {
+  const tileUseStates = {
     p1hand: p1hand,
-    setp1hand: setp1hand
+    setp1hand: setp1hand,
+    centerTiles: centerTiles,
+    setCenterTiles: setCenterTiles
   }
 
   return (
     <div className="App">
       <header className="App-header">
-        <TilesContext.Provider value={tileLocations}>
+        <TilesContext.Provider value={tileUseStates}>
           <Hand/>
+          <CenterTiles/>
         </TilesContext.Provider>
       </header>
     </div>
@@ -129,9 +132,11 @@ const Tile = ({name, location}) => {
   const onStop = (e, position) => {
     const {x, y} = position;
     if (y < 200) {
-      //setControlledPosition({x:0, y:0});
       const tileIndex = tiles.p1hand.indexOf(name);
-      tiles.setp1hand(tileIndex > -1 ? [...tiles.p1hand.slice(0, tileIndex), ...tiles.p1hand.slice(tileIndex + 1)] : tiles.p1hand);
+      if (tileIndex > -1) {
+        tiles.setCenterTiles(tiles.centerTiles.concat(tiles.p1hand[tileIndex]));
+        tiles.setp1hand([...tiles.p1hand.slice(0, tileIndex), ...tiles.p1hand.slice(tileIndex + 1)]);
+      }
     } else {
       setControlledPosition({x:0, y:300});
     }
@@ -160,14 +165,16 @@ const Hand = () => {
   ) 
 }
 
-const centerTiles = ({tiles}) => {
+const CenterTiles = () => {
+  const tiles = useContext(TilesContext)
+
   return (
     <div>
-    {tiles.map(name =>
-      <Tile name={name} location={0}/>
-    )}
+      {tiles.centerTiles.map(name =>
+        <Tile name={name} location={0}/>
+      )} 
     </div>
-  )
+  ) 
 }
 
 export default App;
