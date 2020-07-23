@@ -118,10 +118,10 @@ const Tile = ({name, location}) => {
 
   const onStop = (e, position) => {
     const {x, y} = position;
-    if (y > 0) {
-      setControlledPosition({x:0, y:300});
+    if (y < 200) {
+      setControlledPosition({x:0, y:0});
     } else {
-      setControlledPosition({x:0, y:-300});
+      setControlledPosition({x:0, y:300});
     }
   };
 
@@ -130,7 +130,7 @@ const Tile = ({name, location}) => {
     bounds="header"
     position={controlledPosition}
     onStop={onStop}
-    disabled={(location == 0) ? true : false}>
+    disabled={(controlledPosition.y == 0) ? true : false}>
       <img src={name} width={75} draggable="false" />
     </Draggable>
   )
