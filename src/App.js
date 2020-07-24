@@ -100,27 +100,25 @@ const App = () => {
   const [centerTiles, setCenterTiles] = useState([]);
 
   const tileUseStates = {
-    p1hand: p1hand,
-    setp1hand: setp1hand,
-    centerTiles: centerTiles,
-    setCenterTiles: setCenterTiles
+    tileGroups: [p1hand, centerTiles],
+    setTileGroups: [setp1hand, setCenterTiles]
   }
 
   return (
     <div className="App">
       <header className="App-header">
         <TilesContext.Provider value={tileUseStates}>
-          <Hand/>
-          <CenterTiles/>
+          <TileGroup location={0}/>
+          <TileGroup location={1}/>
         </TilesContext.Provider>
       </header>
     </div>
   );
 }
 
-const Tile = ({name, location}) => {
+const Tile = ({name, location, index}) => {
   let yInitial;
-  if (location == 1) {
+  if (location == 0) {
     yInitial = 300;
   } else {
     yInitial = 0;
@@ -132,10 +130,14 @@ const Tile = ({name, location}) => {
   const onStop = (e, position) => {
     const {x, y} = position;
     if (y < 200) {
-      const tileIndex = tiles.p1hand.indexOf(name);
-      if (tileIndex > -1) {
-        tiles.setCenterTiles(tiles.centerTiles.concat(tiles.p1hand[tileIndex]));
-        tiles.setp1hand([...tiles.p1hand.slice(0, tileIndex), ...tiles.p1hand.slice(tileIndex + 1)]);
+      //const tileIndex = tiles.tileGroups[0].indexOf(name);
+
+      if (index > -1) {
+        // Adds the newly played tile to centerTiles
+        tiles.setTileGroups[1](tiles.tileGroups[1].concat(tiles.tileGroups[0][index]));
+
+        // Removes the newly played tile from p1hand
+        tiles.setTileGroups[0]([...tiles.tileGroups[0].slice(0, index), ...tiles.tileGroups[0].slice(index + 1)]);
       }
     } else {
       setControlledPosition({x:0, y:300});
@@ -153,25 +155,13 @@ const Tile = ({name, location}) => {
   )
 }
 
-const Hand = () => {
+const TileGroup = ({location}) => {
   const tiles = useContext(TilesContext)
 
   return (
     <div>
-      {tiles.p1hand.map(name =>
-        <Tile name={name} location={1}/>
-      )} 
-    </div>
-  ) 
-}
-
-const CenterTiles = () => {
-  const tiles = useContext(TilesContext)
-
-  return (
-    <div>
-      {tiles.centerTiles.map(name =>
-        <Tile name={name} location={0}/>
+      {tiles.tileGroups[location].map((name, index) =>
+        <Tile name={name} location={location} index={index}/>
       )} 
     </div>
   ) 
