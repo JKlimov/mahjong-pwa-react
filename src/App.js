@@ -93,12 +93,15 @@ function drawHand(deck) {
 }
 
 const App = () => {
-  let deck = tilesArr.concat(tilesArr).concat(tilesArr).concat(tilesArr);
+  // The deck has 4 copies of every tile
+  let deck = Array(4).fill(tilesArr).flat();
   shuffleArray(deck);
 
+  //const [hands, setHands] = useState(Array(4).fill(drawHand(deck)));
   const [p1hand, setp1hand] = useState(drawHand(deck));
   const [centerTiles, setCenterTiles] = useState([]);
 
+  // TileGroups are sorted by location
   const tileUseStates = {
     tileGroups: [p1hand, centerTiles],
     setTileGroups: [setp1hand, setCenterTiles]
@@ -116,6 +119,8 @@ const App = () => {
   );
 }
 
+// Location refers to area of the board (in a hand, in the center, etc.)
+// Index refers to the tile number within a group
 const Tile = ({name, location, index}) => {
   let yInitial;
   if (location == 0) {
@@ -130,8 +135,6 @@ const Tile = ({name, location, index}) => {
   const onStop = (e, position) => {
     const {x, y} = position;
     if (y < 200) {
-      //const tileIndex = tiles.tileGroups[0].indexOf(name);
-
       if (index > -1) {
         // Adds the newly played tile to centerTiles
         tiles.setTileGroups[1](tiles.tileGroups[1].concat(tiles.tileGroups[0][index]));
@@ -155,6 +158,7 @@ const Tile = ({name, location, index}) => {
   )
 }
 
+// Represents a group of tiles at a particular location
 const TileGroup = ({location}) => {
   const tiles = useContext(TilesContext)
 
