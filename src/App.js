@@ -165,7 +165,7 @@ const TileGroup = ({location}) => {
   return (
     <div>
       {tiles.tileGroups[location].map((name, index) =>
-        <Tile name={name} location={location} index={index}/>
+        <Tile name={name} location={location} index={index} key={name + " " + index}/>
       )} 
     </div>
   ) 
