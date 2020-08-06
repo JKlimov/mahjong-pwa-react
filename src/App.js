@@ -37,6 +37,7 @@ import MJw6 from './MJ Tiles/MJw6-.svg';
 import MJw7 from './MJ Tiles/MJw7-.svg';
 import MJw8 from './MJ Tiles/MJw8-.svg';
 import MJw9 from './MJ Tiles/MJw9-.svg';
+import MJ0 from './MJ Tiles/MJ0.svg';
 
 export const tilesArr = [
   MJd1,
@@ -72,7 +73,7 @@ export const tilesArr = [
   MJw2,
   MJw3,
   MJw4,
-  MJw9,
+  MJw9
 ];
 
 const MAX_HAND_SIZE = 14;
@@ -113,7 +114,6 @@ const App = () => {
     <div className="App">
      <header className="App-header">
         <TilesContext.Provider value={tileUseStates}>
-
           <div className="P1hand">
             <TileGroup location={0}/>
           </div>
@@ -170,7 +170,7 @@ const Tile = ({name, location, index}) => {
     position={controlledPosition}
     onStop={onStop}
     disabled={(location != 0) ? true : false}>
-      <img src={name} style={{width: "2.8vw"}} draggable="false" alt=""/>
+      <img src={location == 0 || location == 4 ? name : MJ0} style={{width: "2.8vw"}} draggable="false" alt=""/>
     </Draggable>
   )
 }
