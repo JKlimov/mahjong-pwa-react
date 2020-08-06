@@ -97,63 +97,80 @@ const App = () => {
   let deck = Array(4).fill(tilesArr).flat();
   shuffleArray(deck);
 
-  //const [hands, setHands] = useState(Array(4).fill(drawHand(deck)));
   const [p1hand, setp1hand] = useState(drawHand(deck));
+  const [p2hand, setp2hand] = useState(drawHand(deck));
+  const [p3hand, setp3hand] = useState(drawHand(deck));
+  const [p4hand, setp4hand] = useState(drawHand(deck));
   const [centerTiles, setCenterTiles] = useState([]);
 
   // TileGroups are sorted by location
   const tileUseStates = {
-    tileGroups: [p1hand, centerTiles],
-    setTileGroups: [setp1hand, setCenterTiles]
+    tileGroups: [p1hand, p2hand, p3hand, p4hand, centerTiles],
+    setTileGroups: [setp1hand, setp2hand, setp3hand, setp4hand, setCenterTiles]
   }
 
   return (
     <div className="App">
-      <header className="App-header">
+     <header className="App-header">
         <TilesContext.Provider value={tileUseStates}>
-          <TileGroup location={0}/>
-          <TileGroup location={1}/>
+
+          <div className="P1hand">
+            <TileGroup location={0}/>
+          </div>
+
+          <div className="P2hand">
+            <TileGroup location={1}/>
+          </div>
+
+          <div className="P3hand">
+            <TileGroup location={2}/>
+          </div>
+
+          <div className="P4hand">
+            <TileGroup location={3}/>
+          </div>
+
+          <div className="CenterTiles">
+            <TileGroup location={4}/>
+          </div>
         </TilesContext.Provider>
-      </header>
+        </header>
     </div>
   );
 }
 
 // Location refers to area of the board (in a hand, in the center, etc.)
+// Locations 0-3 are player hands 1-4, and location 4 is center tiles
 // Index refers to the tile number within a group
 const Tile = ({name, location, index}) => {
-  let yInitial;
-  if (location == 0) {
-    yInitial = 300;
-  } else {
-    yInitial = 0;
-  }
-  const [controlledPosition, setControlledPosition] = useState({x: 0, y: yInitial});
+
+  const [controlledPosition, setControlledPosition] = useState({x: 0, y: 0});
 
   const tiles = useContext(TilesContext)
 
   const onStop = (e, position) => {
     const {x, y} = position;
-    if (y < 200) {
+
+    if (y < -50) {
       if (index > -1) {
         // Adds the newly played tile to centerTiles
-        tiles.setTileGroups[1](tiles.tileGroups[1].concat(tiles.tileGroups[0][index]));
+        tiles.setTileGroups[4](tiles.tileGroups[4].concat(tiles.tileGroups[0][index]));
 
         // Removes the newly played tile from p1hand
         tiles.setTileGroups[0]([...tiles.tileGroups[0].slice(0, index), ...tiles.tileGroups[0].slice(index + 1)]);
       }
     } else {
-      setControlledPosition({x:0, y:300});
+      setControlledPosition({x: 0, y: 0});
     }
   };
 
   return (
     <Draggable
-    bounds="header"
+    bounds={null}
     position={controlledPosition}
     onStop={onStop}
-    disabled={(controlledPosition.y == 0) ? true : false}>
-      <img src={name} width={75} draggable="false" />
+    disabled={(location != 0) ? true : false}>
+      <img src={name} width={40} draggable="false" alt=""/>
     </Draggable>
   )
 }
