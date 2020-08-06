@@ -170,7 +170,7 @@ const Tile = ({name, location, index}) => {
     position={controlledPosition}
     onStop={onStop}
     disabled={(location != 0) ? true : false}>
-      <img src={name} width={40} draggable="false" alt=""/>
+      <img src={name} style={{width: "2.8vw"}} draggable="false" alt=""/>
     </Draggable>
   )
 }
