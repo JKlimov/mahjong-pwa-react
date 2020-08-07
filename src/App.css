@@ -30,6 +30,7 @@
   top: 90%;
   left: 50%;
   transform: translate(-50%, -50%);
+  white-space: nowrap;
 }
 
 .P2hand {
@@ -42,10 +43,11 @@
 
 .P3hand {
   position: fixed;
-  /*transform-origin: top left;*/
+  transform-origin: top left;
   top: 10%;
   left: 50%;
   transform: translate(-50%, -50%);
+  white-space: nowrap;
 }
 
 .P4hand {

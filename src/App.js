@@ -164,13 +164,15 @@ const Tile = ({name, location, index}) => {
     }
   };
 
+  const tileWidth = location == 1 || location == 3 ? 3 : 4.5;
+
   return (
     <Draggable
     bounds={null}
     position={controlledPosition}
     onStop={onStop}
     disabled={(location != 0) ? true : false}>
-      <img src={location == 0 || location == 4 ? name : MJ0} style={{width: "2.8vw"}} draggable="false" alt=""/>
+      <img src={location == 0 || location == 4 ? name : MJ0} style={{width: `${tileWidth}vw`}} draggable="false" alt=""/>
     </Draggable>
   )
 }
