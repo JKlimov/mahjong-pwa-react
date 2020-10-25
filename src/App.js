@@ -1,5 +1,6 @@
-import React, { useState, useContext } from 'react';
-import { TilesContext } from './tilesContext'
+import React, { useState } from 'react';
+//import React, { useState, useContext } from 'react';
+//import { TilesContext } from './tilesContext'
 import './App.css';
 import Draggable from 'react-draggable';
 import SvgIcon from '@material-ui/core/SvgIcon';
@@ -113,27 +114,25 @@ const App = () => {
   return (
     <div className="App">
      <header className="App-header">
-        <TilesContext.Provider value={tileUseStates}>
-          <div className="P1hand">
-            <TileGroup location={0}/>
-          </div>
+        <div className="P1hand">
+          <TileGroup location={0} tiles={tileUseStates}/>
+        </div>
 
-          <div className="P2hand">
-            <TileGroup location={1}/>
-          </div>
+        <div className="P2hand">
+          <TileGroup location={1} tiles={tileUseStates}/>
+        </div>
 
-          <div className="P3hand">
-            <TileGroup location={2}/>
-          </div>
+        <div className="P3hand">
+          <TileGroup location={2} tiles={tileUseStates}/>
+        </div>
 
-          <div className="P4hand">
-            <TileGroup location={3}/>
-          </div>
+        <div className="P4hand">
+          <TileGroup location={3} tiles={tileUseStates}/>
+        </div>
 
-          <div className="CenterTiles">
-            <TileGroup location={4}/>
-          </div>
-        </TilesContext.Provider>
+        <div className="CenterTiles">
+          <TileGroup location={4} tiles={tileUseStates}/>
+        </div>
         </header>
     </div>
   );
@@ -142,11 +141,10 @@ const App = () => {
 // Location refers to area of the board (in a hand, in the center, etc.)
 // Locations 0-3 are player hands 1-4, and location 4 is center tiles
 // Index refers to the tile number within a group
-const Tile = ({name, location, index}) => {
+// Tiles are the useStates for all tile groups
+const Tile = ({name, location, index, tiles}) => {
 
   const [controlledPosition, setControlledPosition] = useState({x: 0, y: 0});
-
-  const tiles = useContext(TilesContext)
 
   const onStop = (e, position) => {
     const {x, y} = position;
@@ -178,13 +176,11 @@ const Tile = ({name, location, index}) => {
 }
 
 // Represents a group of tiles at a particular location
-const TileGroup = ({location}) => {
-  const tiles = useContext(TilesContext)
-
+const TileGroup = ({location, tiles}) => {
   return (
     <div>
       {tiles.tileGroups[location].map((name, index) =>
-        <Tile name={name} location={location} index={index} key={name + " " + index}/>
+        <Tile name={name} location={location} index={index} tiles={tiles} key={name + " " + index}/>
       )} 
     </div>
   ) 
