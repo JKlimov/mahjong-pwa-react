@@ -40,41 +40,44 @@ import MJw8 from './MJ Tiles/MJw8-.svg';
 import MJw9 from './MJ Tiles/MJw9-.svg';
 import MJ0 from './MJ Tiles/MJ0.svg';
 
+// src: svg source for each tile
+// suit: 1 -> dots, 2 -> bamboo, 3 -> characters, 4-7 -> ESWN winds, 8-10 -> RGW dragons
+// value: numeric value for tile; winds and dragons have value 1 
 export const tilesArr = [
-  MJd1,
-  MJd2,
-  MJd3,
-  MJf1,
-  MJf2,
-  MJf3,
-  MJf4,
-  MJs1,
-  MJs2,
-  MJs3,
-  MJs4,
-  MJs5,
-  MJs6,
-  MJs7,
-  MJs8,
-  MJs9,
-  MJt1,
-  MJt2,
-  MJt3,
-  MJt4,
-  MJt5,
-  MJt6,
-  MJt7,
-  MJt8,
-  MJt9,
-  MJw1,
-  MJw2,
-  MJw3,
-  MJw4,
-  MJw5,
-  MJw6,
-  MJw7,
-  MJw8,
-  MJw9
+  {src: MJd1, suit: 8, value: 1},
+  {src: MJd2, suit: 9, value: 1},
+  {src: MJd3, suit: 10, value: 1},
+  {src: MJf1, suit: 4, value: 1},
+  {src: MJf2, suit: 5, value: 1},
+  {src: MJf3, suit: 6, value: 1},
+  {src: MJf4, suit: 7, value: 1},
+  {src: MJs1, suit: 2, value: 1},
+  {src: MJs2, suit: 2, value: 2},
+  {src: MJs3, suit: 2, value: 3},
+  {src: MJs4, suit: 2, value: 4},
+  {src: MJs5, suit: 2, value: 5},
+  {src: MJs6, suit: 2, value: 6},
+  {src: MJs7, suit: 2, value: 7},
+  {src: MJs8, suit: 2, value: 8},
+  {src: MJs9, suit: 2, value: 9},
+  {src: MJt1, suit: 1, value: 1},
+  {src: MJt2, suit: 1, value: 2},
+  {src: MJt3, suit: 1, value: 3},
+  {src: MJt4, suit: 1, value: 4},
+  {src: MJt5, suit: 1, value: 5},
+  {src: MJt6, suit: 1, value: 6},
+  {src: MJt7, suit: 1, value: 7},
+  {src: MJt8, suit: 1, value: 8},
+  {src: MJt9, suit: 1, value: 9},
+  {src: MJw1, suit: 3, value: 1},
+  {src: MJw2, suit: 3, value: 2},
+  {src: MJw3, suit: 3, value: 3},
+  {src: MJw4, suit: 3, value: 4},
+  {src: MJw5, suit: 3, value: 5},
+  {src: MJw6, suit: 3, value: 6},
+  {src: MJw7, suit: 3, value: 7},
+  {src: MJw8, suit: 3, value: 8},
+  {src: MJw9, suit: 3, value: 9}
 ];
 
 const MAX_HAND_SIZE = 14;
@@ -127,23 +130,23 @@ const App = () => {
     <div className="App">
      <header className="App-header">
         <div className="P1hand">
-          <TileGroup location={0} tiles={tileUseStates}/>
+          <TileGroup location={0} tileUseStates={tileUseStates}/>
         </div>
 
         <div className="P2hand">
-          <TileGroup location={1} tiles={tileUseStates}/>
+          <TileGroup location={1} tileUseStates={tileUseStates}/>
         </div>
 
         <div className="P3hand">
-          <TileGroup location={2} tiles={tileUseStates}/>
+          <TileGroup location={2} tileUseStates={tileUseStates}/>
         </div>
 
         <div className="P4hand">
-          <TileGroup location={3} tiles={tileUseStates}/>
+          <TileGroup location={3} tileUseStates={tileUseStates}/>
         </div>
 
         <div className="CenterTiles">
-          <TileGroup location={4} tiles={tileUseStates}/>
+          <TileGroup location={4} tileUseStates={tileUseStates}/>
         </div>
         </header>
     </div>
@@ -153,9 +156,8 @@ const App = () => {
 // Location refers to area of the board (in a hand, in the center, etc.)
 // Locations 0-3 are player hands 1-4, and location 4 is center tiles
 // Index refers to the tile number within a group
-// Tiles are the useStates for all tile groups
-const Tile = ({name, location, index, tiles}) => {
-  
+const Tile = ({src, location, index, tileUseStates}) => {
+
   const [controlledPosition, setControlledPosition] = useState({x: 0, y: 0});
 
   const onStop = (e, position) => {
@@ -164,10 +166,10 @@ const Tile = ({name, location, index, tiles}) => {
     if (y < -50) {
       if (index > -1) {
         // Adds the newly played tile to centerTiles
-        tiles.setTileGroups[4](tiles.tileGroups[4].concat(tiles.tileGroups[0][index]));
+        tileUseStates.setTileGroups[4](tileUseStates.tileGroups[4].concat(tileUseStates.tileGroups[0][index]));
 
         // Removes the newly played tile from p1hand
-        tiles.setTileGroups[0]([...tiles.tileGroups[0].slice(0, index), ...tiles.tileGroups[0].slice(index + 1)]);
+        tileUseStates.setTileGroups[0]([...tileUseStates.tileGroups[0].slice(0, index), ...tileUseStates.tileGroups[0].slice(index + 1)]);
       }
     } else {
       setControlledPosition({x: 0, y: 0});
@@ -182,18 +184,18 @@ const Tile = ({name, location, index, tiles}) => {
     position={controlledPosition}
     onStop={onStop}
     disabled={(location != 0) ? true : false}>
-      <img src={location == 0 || location == 4 ? name : MJ0} style={{width: `${tileWidth}vw`}} draggable="false" alt=""/>
+      <img src={location == 0 || location == 4 ? src : MJ0} style={{width: `${tileWidth}vw`}} draggable="false" alt=""/>
     </Draggable>
   )
 }
 
 // Represents a group of tiles at a particular location
 // TileGroups are given useStates for all tiles
-const TileGroup = ({location, tiles}) => {
+const TileGroup = ({location, tileUseStates}) => {
   return (
     <div>
-      {tiles.tileGroups[location].map((name, index) =>
-        <Tile name={name} location={location} index={index} tiles={tiles} key={name + " " + index}/>
+      {tileUseStates.tileGroups[location].map((tile, index) =>
+        <Tile src={tile.src} location={location} index={index} tileUseStates={tileUseStates} key={tile.suit + " " + tile.value + " " + index}/>
       )} 
     </div>
   ) 
