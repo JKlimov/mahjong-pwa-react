@@ -97,13 +97,29 @@ function drawHand(deck) {
   return hand;
 }
 
-/*function checkForWinningHand(tileGroup) {
+// Checks if a tileGroup is a winning hand
+function checkForWinningHand(tileGroup) {
+  // Hand must have 14 tiles
   if (tileGroup.length != MAX_HAND_SIZE) {
     return false;
-  } else {
-    return true;
   }
-}*/
+  // First, check tiles one by one
+  tileGroup.forEach((tile, index) => {
+    // Save attributes for the current tile
+    const currentIndex = index;
+    const currentSuit = tile.suit;
+    const currentValue = tile.value;
+
+    // For each tile, check if it has a twin
+    tileGroup.forEach((tile, index) => {
+      // If the tiles are unique (different index) and match suit and value, they are twins
+      if (index != currentIndex && tile.suit == currentSuit && tile.value == currentValue) {
+        console.log("twin");
+      }
+    });
+  });
+  return true;
+}
 
 const App = () => {
   // The deck has 4 copies of every tile
@@ -122,9 +138,9 @@ const App = () => {
     setTileGroups: [setp1hand, setp2hand, setp3hand, setp4hand, setCenterTiles]
   }
 
-  /*if (checkForWinningHand(p1hand)) {
-    console.log(p1hand.length);
-  }*/
+  if (checkForWinningHand(p1hand)) {
+    console.log("P1 win");
+  }
 
   return (
     <div className="App">
