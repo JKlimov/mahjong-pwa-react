@@ -52,28 +52,28 @@ export const tilesArr = [
   MJs2,
   MJs3,
   MJs4,
-  MJs1,
-  MJs2,
-  MJs3,
-  MJs4,
+  MJs5,
+  MJs6,
+  MJs7,
+  MJs8,
   MJs9,
   MJt1,
   MJt2,
   MJt3,
   MJt4,
-  MJt1,
-  MJt2,
-  MJt3,
-  MJt4,
+  MJt5,
+  MJt6,
+  MJt7,
+  MJt8,
   MJt9,
   MJw1,
   MJw2,
   MJw3,
   MJw4,
-  MJw1,
-  MJw2,
-  MJw3,
-  MJw4,
+  MJw5,
+  MJw6,
+  MJw7,
+  MJw8,
   MJw9
 ];
 
@@ -94,6 +94,14 @@ function drawHand(deck) {
   return hand;
 }
 
+/*function checkForWinningHand(tileGroup) {
+  if (tileGroup.length != MAX_HAND_SIZE) {
+    return false;
+  } else {
+    return true;
+  }
+}*/
+
 const App = () => {
   // The deck has 4 copies of every tile
   let deck = Array(4).fill(tilesArr).flat();
@@ -110,6 +118,10 @@ const App = () => {
     tileGroups: [p1hand, p2hand, p3hand, p4hand, centerTiles],
     setTileGroups: [setp1hand, setp2hand, setp3hand, setp4hand, setCenterTiles]
   }
+
+  /*if (checkForWinningHand(p1hand)) {
+    console.log(p1hand.length);
+  }*/
 
   return (
     <div className="App">
@@ -143,7 +155,7 @@ const App = () => {
 // Index refers to the tile number within a group
 // Tiles are the useStates for all tile groups
 const Tile = ({name, location, index, tiles}) => {
-
+  
   const [controlledPosition, setControlledPosition] = useState({x: 0, y: 0});
 
   const onStop = (e, position) => {
@@ -176,6 +188,7 @@ const Tile = ({name, location, index, tiles}) => {
 }
 
 // Represents a group of tiles at a particular location
+// TileGroups are given useStates for all tiles
 const TileGroup = ({location, tiles}) => {
   return (
     <div>
