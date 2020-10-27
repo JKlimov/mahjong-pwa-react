@@ -97,6 +97,10 @@ function drawHand(deck) {
   return hand;
 }
 
+function drawTile(deck) {
+  return deck.pop();
+}
+
 // Checks if a tileGroup is a winning hand
 function checkForWinningHand(tileGroup) {
   // Hand must have 14 tiles
@@ -194,12 +198,12 @@ const App = () => {
   shuffleArray(deck);
 
   // Test for winning hand
-  const [p1hand, setp1hand] = useState([tilesArr[0], tilesArr[0],
+  /*const [p1hand, setp1hand] = useState([tilesArr[0], tilesArr[0],
     tilesArr[1], tilesArr[1], tilesArr[1],
     tilesArr[8], tilesArr[8], tilesArr[8],
     tilesArr[9], tilesArr[10], tilesArr[11],
-    tilesArr[20], tilesArr[21], tilesArr[22]]);
-  //const [p1hand, setp1hand] = useState(drawHand(deck));
+    tilesArr[20], tilesArr[21], tilesArr[22]]);*/
+  const [p1hand, setp1hand] = useState(drawHand(deck));
   const [p2hand, setp2hand] = useState(drawHand(deck));
   const [p3hand, setp3hand] = useState(drawHand(deck));
   const [p4hand, setp4hand] = useState(drawHand(deck));
@@ -213,29 +217,30 @@ const App = () => {
 
   if (checkForWinningHand(p1hand)) {
     console.log("P1 win");
+    console.log(p1hand);
   }
 
   return (
     <div className="App">
      <header className="App-header">
         <div className="P1hand">
-          <TileGroup location={0} tileUseStates={tileUseStates}/>
+          <TileGroup location={0} tileUseStates={tileUseStates} deck={deck}/>
         </div>
 
         <div className="P2hand">
-          <TileGroup location={1} tileUseStates={tileUseStates}/>
+          <TileGroup location={1} tileUseStates={tileUseStates} deck={deck}/>
         </div>
 
         <div className="P3hand">
-          <TileGroup location={2} tileUseStates={tileUseStates}/>
+          <TileGroup location={2} tileUseStates={tileUseStates} deck={deck}/>
         </div>
 
         <div className="P4hand">
-          <TileGroup location={3} tileUseStates={tileUseStates}/>
+          <TileGroup location={3} tileUseStates={tileUseStates} deck={deck}/>
         </div>
 
         <div className="CenterTiles">
-          <TileGroup location={4} tileUseStates={tileUseStates}/>
+          <TileGroup location={4} tileUseStates={tileUseStates} deck={deck}/>
         </div>
         </header>
     </div>
@@ -245,22 +250,23 @@ const App = () => {
 // Location refers to area of the board (in a hand, in the center, etc.)
 // Locations 0-3 are player hands 1-4, and location 4 is center tiles
 // Index refers to the tile number within a group
-const Tile = ({src, location, index, tileUseStates}) => {
+const Tile = ({src, location, index, tileUseStates, deck}) => {
 
   const [controlledPosition, setControlledPosition] = useState({x: 0, y: 0});
 
   const onStop = (e, position) => {
     const {x, y} = position;
 
-    if (y < -50) {
-      if (index > -1) {
-        // Adds the newly played tile to centerTiles
-        tileUseStates.setTileGroups[4](tileUseStates.tileGroups[4].concat(tileUseStates.tileGroups[0][index]));
-
-        // Removes the newly played tile from p1hand
-        tileUseStates.setTileGroups[0]([...tileUseStates.tileGroups[0].slice(0, index), ...tileUseStates.tileGroups[0].slice(index + 1)]);
+    // When the tile is played
+    if (y < -50 && index >= 0) {
+      // Adds the newly played tile to centerTiles
+      tileUseStates.setTileGroups[4](tileUseStates.tileGroups[4].concat(tileUseStates.tileGroups[0][index]));
+      // Removes the newly played tile from p1hand and draws a new tile if possible
+      if (deck.length > 0) {
+        tileUseStates.setTileGroups[0]([...tileUseStates.tileGroups[0].slice(0, index), ...tileUseStates.tileGroups[0].slice(index + 1), drawTile(deck)]);
       }
     } else {
+      // Snap tile back to starting position
       setControlledPosition({x: 0, y: 0});
     }
   };
@@ -281,11 +287,12 @@ const Tile = ({src, location, index, tileUseStates}) => {
 // Represents a group of tiles at a particular location
 // TileGroups are given useStates for all tiles
 // Key is a unique identifier for each tile
-const TileGroup = ({location, tileUseStates}) => {
+const TileGroup = ({location, tileUseStates, deck}) => {
   return (
     <div>
       {tileUseStates.tileGroups[location].map((tile, index) =>
-        <Tile src={tile.src} location={location} index={index} tileUseStates={tileUseStates} key={tile.suit + " " + tile.value + " " + location + " " + index}/>
+        <Tile src={tile.src} location={location} index={index} tileUseStates={tileUseStates} 
+        deck={deck} key={tile.suit + " " + tile.value + " " + location + " " + index}/>
       )} 
     </div>
   ) 
