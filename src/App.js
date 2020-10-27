@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 //import { TilesContext } from './tilesContext'
 import './App.css';
 import Draggable from 'react-draggable';
-import SvgIcon from '@material-ui/core/SvgIcon';
+//import SvgIcon from '@material-ui/core/SvgIcon';
 import MJd1 from './MJ Tiles/MJd1-.svg';
 import MJd2 from './MJ Tiles/MJd2-.svg';
 import MJd3 from './MJ Tiles/MJd3-.svg';
@@ -193,7 +193,13 @@ const App = () => {
   let deck = Array(4).fill(tilesArr).flat();
   shuffleArray(deck);
 
-  const [p1hand, setp1hand] = useState(drawHand(deck));
+  // Test for winning hand
+  const [p1hand, setp1hand] = useState([tilesArr[0], tilesArr[0],
+    tilesArr[1], tilesArr[1], tilesArr[1],
+    tilesArr[8], tilesArr[8], tilesArr[8],
+    tilesArr[9], tilesArr[10], tilesArr[11],
+    tilesArr[20], tilesArr[21], tilesArr[22]]);
+  //const [p1hand, setp1hand] = useState(drawHand(deck));
   const [p2hand, setp2hand] = useState(drawHand(deck));
   const [p3hand, setp3hand] = useState(drawHand(deck));
   const [p4hand, setp4hand] = useState(drawHand(deck));
@@ -207,6 +213,8 @@ const App = () => {
 
   if (checkForWinningHand(p1hand)) {
     console.log("P1 win");
+  } else {
+    console.log("No win");
   }
 
   return (
