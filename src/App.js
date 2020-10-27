@@ -194,8 +194,8 @@ function backtrackingCheck(tileGroup, markedTiles, pairAlreadyFound) {
 
 const App = () => {
   // The deck has 4 copies of every tile
-  let deck = Array(4).fill(tilesArr).flat();
-  shuffleArray(deck);
+  let initialDeck = Array(4).fill(tilesArr).flat();
+  shuffleArray(initialDeck);
 
   // Test for winning hand
   /*const [p1hand, setp1hand] = useState([tilesArr[0], tilesArr[0],
@@ -203,11 +203,15 @@ const App = () => {
     tilesArr[8], tilesArr[8], tilesArr[8],
     tilesArr[9], tilesArr[10], tilesArr[11],
     tilesArr[20], tilesArr[21], tilesArr[22]]);*/
-  const [p1hand, setp1hand] = useState(drawHand(deck));
-  const [p2hand, setp2hand] = useState(drawHand(deck));
-  const [p3hand, setp3hand] = useState(drawHand(deck));
-  const [p4hand, setp4hand] = useState(drawHand(deck));
+  const [p1hand, setp1hand] = useState(drawHand(initialDeck));
+  const [p2hand, setp2hand] = useState(drawHand(initialDeck));
+  const [p3hand, setp3hand] = useState(drawHand(initialDeck));
+  const [p4hand, setp4hand] = useState(drawHand(initialDeck));
   const [centerTiles, setCenterTiles] = useState([]);
+
+  // Allows the deck to be modified by child components
+  const [deck, setDeck] = useState(initialDeck);
+  console.log(deck.length);
 
   // TileGroups are sorted by location
   const tileUseStates = {
@@ -258,13 +262,11 @@ const Tile = ({src, location, index, tileUseStates, deck}) => {
     const {x, y} = position;
 
     // When the tile is played
-    if (y < -50 && index >= 0) {
+    if (y < -50 && index >= 0 && deck.length > 0) {
       // Adds the newly played tile to centerTiles
       tileUseStates.setTileGroups[4](tileUseStates.tileGroups[4].concat(tileUseStates.tileGroups[0][index]));
       // Removes the newly played tile from p1hand and draws a new tile if possible
-      if (deck.length > 0) {
-        tileUseStates.setTileGroups[0]([...tileUseStates.tileGroups[0].slice(0, index), ...tileUseStates.tileGroups[0].slice(index + 1), drawTile(deck)]);
-      }
+      tileUseStates.setTileGroups[0]([...tileUseStates.tileGroups[0].slice(0, index), ...tileUseStates.tileGroups[0].slice(index + 1), drawTile(deck)]);
     } else {
       // Snap tile back to starting position
       setControlledPosition({x: 0, y: 0});
