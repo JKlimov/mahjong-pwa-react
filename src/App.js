@@ -116,7 +116,7 @@ function backtrackingCheck(tileGroup, markedTiles, pairAlreadyFound) {
   // If we haven't found a pair yet, look for one
   if (!pairAlreadyFound) {
     // First, check tiles one by one
-    tileGroup.forEach((firstTile, firstIndex) => {
+    for (let firstIndex = 0; firstIndex < tileGroup.length; firstIndex++) {
       // For each tile, check if it has a twin
       // No need to look at previous elements because those have already been paired
       for (let secondIndex = firstIndex; secondIndex < tileGroup.length; secondIndex++) {
@@ -137,10 +137,10 @@ function backtrackingCheck(tileGroup, markedTiles, pairAlreadyFound) {
           }
         }
       }
-    });
+    }
   } else {
     // Otherwise, look for triplets
-    tileGroup.forEach((firstTile, firstIndex) => {
+    for (let firstIndex = 0; firstIndex < tileGroup.length; firstIndex++) {
       for (let secondIndex = firstIndex; secondIndex < tileGroup.length; secondIndex++) {
         for (let thirdIndex = secondIndex; thirdIndex < tileGroup.length; thirdIndex++) {
           // Exclude tiles which have already been marked as winning
@@ -183,7 +183,7 @@ function backtrackingCheck(tileGroup, markedTiles, pairAlreadyFound) {
           }
         }
       }
-    });
+    }
   }
   return false;
 }
@@ -213,8 +213,6 @@ const App = () => {
 
   if (checkForWinningHand(p1hand)) {
     console.log("P1 win");
-  } else {
-    console.log("No win");
   }
 
   return (
