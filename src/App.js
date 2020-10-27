@@ -114,11 +114,19 @@ function checkForWinningHand(tileGroup) {
     tileGroup.forEach((tile, index) => {
       // If the tiles are unique (different index) and match suit and value, they are twins
       if (index != currentIndex && tile.suit == currentSuit && tile.value == currentValue) {
-        console.log("twin");
+        // Save the paired tile's index so we can exclude it
+        const pairIndex = index;
+        // Once we find a pair, check the remaining 12 tiles for pungs and chows
+        tileGroup.forEach((tile, index) => {
+          // Exclude the two paired tiles
+          if (index != currentIndex && index != pairIndex) {
+            
+          }
+        });
       }
     });
   });
-  return true;
+  return false;
 }
 
 const App = () => {
@@ -207,11 +215,12 @@ const Tile = ({src, location, index, tileUseStates}) => {
 
 // Represents a group of tiles at a particular location
 // TileGroups are given useStates for all tiles
+// Key is a unique identifier for each tile
 const TileGroup = ({location, tileUseStates}) => {
   return (
     <div>
       {tileUseStates.tileGroups[location].map((tile, index) =>
-        <Tile src={tile.src} location={location} index={index} tileUseStates={tileUseStates} key={tile.suit + " " + tile.value + " " + index}/>
+        <Tile src={tile.src} location={location} index={index} tileUseStates={tileUseStates} key={tile.suit + " " + tile.value + " " + location + " " + index}/>
       )} 
     </div>
   ) 
