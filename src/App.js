@@ -160,7 +160,7 @@ function backtrackingCheck(tileGroup, markedTiles, pairAlreadyFound) {
             tileGroup[secondIndex].suit == tileGroup[thirdIndex].suit) &&
             
             // Either all three values match, which forms a pong
-            (tileGroup[firstIndex].value == tileGroup[secondIndex].value && 
+            ((tileGroup[firstIndex].value == tileGroup[secondIndex].value && 
             tileGroup[firstIndex].value == tileGroup[thirdIndex].value && 
             tileGroup[secondIndex].value == tileGroup[thirdIndex].value) ||
             
@@ -170,13 +170,14 @@ function backtrackingCheck(tileGroup, markedTiles, pairAlreadyFound) {
             tileGroup[firstIndex].value != tileGroup[thirdIndex].value && 
             tileGroup[secondIndex].value != tileGroup[thirdIndex].value &&
             // Check for consecutive values by making sure max and min differ by 2
-            maxValue - minValue == 2)) {
+            maxValue - minValue == 2))) {
               // Mark indices for grouped tiles as winning
               markedTiles[firstIndex] = true;
               markedTiles[secondIndex] = true;
               markedTiles[thirdIndex] = true;
               // Recursive call; we have already found a pair by this point
               if (backtrackingCheck(tileGroup, markedTiles, true)) {
+                console.log(tileGroup[firstIndex].value + " " + tileGroup[secondIndex].value + " " + tileGroup[thirdIndex].value);
                 return true;
               }
               // Otherwise we didn't find a win, so we unmark those indices
@@ -211,7 +212,6 @@ const App = () => {
 
   // Allows the deck to be modified by child components
   const [deck, setDeck] = useState(initialDeck);
-  console.log(deck.length);
 
   // TileGroups are sorted by location
   const tileUseStates = {
