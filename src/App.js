@@ -219,32 +219,34 @@ const App = () => {
     setTileGroups: [setp1hand, setp2hand, setp3hand, setp4hand, setCenterTiles]
   }
 
+  let isGameActive = true;
   if (checkForWinningHand(p1hand)) {
     console.log("P1 win");
     console.log(p1hand);
+    isGameActive = false;
   }
 
   return (
     <div className="App">
      <header className="App-header">
         <div className="P1hand">
-          <TileGroup location={0} tileUseStates={tileUseStates} deck={deck}/>
+          <TileGroup location={0} tileUseStates={tileUseStates} deck={deck} isGameActive={isGameActive}/>
         </div>
 
         <div className="P2hand">
-          <TileGroup location={1} tileUseStates={tileUseStates} deck={deck}/>
+          <TileGroup location={1} tileUseStates={tileUseStates} deck={deck} isGameActive={isGameActive}/>
         </div>
 
         <div className="P3hand">
-          <TileGroup location={2} tileUseStates={tileUseStates} deck={deck}/>
+          <TileGroup location={2} tileUseStates={tileUseStates} deck={deck} isGameActive={isGameActive}/>
         </div>
 
         <div className="P4hand">
-          <TileGroup location={3} tileUseStates={tileUseStates} deck={deck}/>
+          <TileGroup location={3} tileUseStates={tileUseStates} deck={deck} isGameActive={isGameActive}/>
         </div>
 
         <div className="CenterTiles">
-          <TileGroup location={4} tileUseStates={tileUseStates} deck={deck}/>
+          <TileGroup location={4} tileUseStates={tileUseStates} deck={deck} isGameActive={isGameActive}/>
         </div>
         </header>
     </div>
@@ -254,7 +256,7 @@ const App = () => {
 // Location refers to area of the board (in a hand, in the center, etc.)
 // Locations 0-3 are player hands 1-4, and location 4 is center tiles
 // Index refers to the tile number within a group
-const Tile = ({src, location, index, tileUseStates, deck}) => {
+const Tile = ({src, location, index, tileUseStates, deck, isGameActive}) => {
 
   const [controlledPosition, setControlledPosition] = useState({x: 0, y: 0});
 
@@ -280,7 +282,7 @@ const Tile = ({src, location, index, tileUseStates, deck}) => {
     bounds={null}
     position={controlledPosition}
     onStop={onStop}
-    disabled={(location != 0) ? true : false}>
+    disabled={(location != 0 || !isGameActive) ? true : false}>
       <img src={location == 0 || location == 4 ? src : MJ0} style={{width: `${tileWidth}vw`}} draggable="false" alt=""/>
     </Draggable>
   )
@@ -289,12 +291,12 @@ const Tile = ({src, location, index, tileUseStates, deck}) => {
 // Represents a group of tiles at a particular location
 // TileGroups are given useStates for all tiles
 // Key is a unique identifier for each tile
-const TileGroup = ({location, tileUseStates, deck}) => {
+const TileGroup = ({location, tileUseStates, deck, isGameActive}) => {
   return (
     <div>
       {tileUseStates.tileGroups[location].map((tile, index) =>
         <Tile src={tile.src} location={location} index={index} tileUseStates={tileUseStates} 
-        deck={deck} key={tile.suit + " " + tile.value + " " + location + " " + index}/>
+        deck={deck} isGameActive={isGameActive} key={tile.suit + " " + tile.value + " " + location + " " + index}/>
       )} 
     </div>
   ) 
