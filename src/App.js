@@ -103,29 +103,88 @@ function checkForWinningHand(tileGroup) {
   if (tileGroup.length != MAX_HAND_SIZE) {
     return false;
   }
-  // First, check tiles one by one
-  tileGroup.forEach((tile, index) => {
-    // Save attributes for the current tile
-    const currentIndex = index;
-    const currentSuit = tile.suit;
-    const currentValue = tile.value;
+  const markedTiles = Array(MAX_HAND_SIZE).fill(false);
+  return backtrackingCheck(tileGroup, markedTiles, false);
+}
 
-    // For each tile, check if it has a twin
-    tileGroup.forEach((tile, index) => {
-      // If the tiles are unique (different index) and match suit and value, they are twins
-      if (index != currentIndex && tile.suit == currentSuit && tile.value == currentValue) {
-        // Save the paired tile's index so we can exclude it
-        const pairIndex = index;
-        // Once we find a pair, check the remaining 12 tiles for pungs and chows
-        tileGroup.forEach((tile, index) => {
-          // Exclude the two paired tiles
-          if (index != currentIndex && index != pairIndex) {
-            
+// Recursive backtracking function used to check for winning hand
+function backtrackingCheck(tileGroup, markedTiles, pairAlreadyFound) {
+  // If every tile is marked as true (winning), the hand is winning
+  if (markedTiles.every(e => e)) {
+    return true;
+  }
+  // If we haven't found a pair yet, look for one
+  if (!pairAlreadyFound) {
+    // First, check tiles one by one
+    tileGroup.forEach((firstTile, firstIndex) => {
+      // For each tile, check if it has a twin
+      // No need to look at previous elements because those have already been paired
+      for (let secondIndex = firstIndex; secondIndex < tileGroup.length; secondIndex++) {
+        // Exclude tiles which have already been marked as winning
+        if (!markedTiles[firstIndex] && !markedTiles[secondIndex]) {
+          // If the tiles are unique (different index) and match suit and value, they are twins
+          if (firstIndex != secondIndex && tileGroup[firstIndex].suit == tileGroup[secondIndex].suit && tileGroup[firstIndex].value == tileGroup[secondIndex].value) {
+            // Mark indices for paired tiles as winning
+            markedTiles[firstIndex] = true;
+            markedTiles[secondIndex] = true;
+            // Call recursively with the pair marked; if true, the hand is winning
+            if (backtrackingCheck(tileGroup, markedTiles, true)) {
+              return true;
+            }
+            // Otherwise we didn't find a win, so we unmark those indices
+            markedTiles[firstIndex] = false;
+            markedTiles[secondIndex] = false;
           }
-        });
+        }
       }
     });
-  });
+  } else {
+    // Otherwise, look for triplets
+    tileGroup.forEach((firstTile, firstIndex) => {
+      for (let secondIndex = firstIndex; secondIndex < tileGroup.length; secondIndex++) {
+        for (let thirdIndex = secondIndex; thirdIndex < tileGroup.length; thirdIndex++) {
+          // Exclude tiles which have already been marked as winning
+          if (!markedTiles[firstIndex] && !markedTiles[secondIndex] && !markedTiles[thirdIndex]) {
+            // Save min and max values to check for sequential values
+            const minValue = Math.min(tileGroup[firstIndex].value, tileGroup[secondIndex].value, tileGroup[thirdIndex].value);
+            const maxValue = Math.max(tileGroup[firstIndex].value, tileGroup[secondIndex].value, tileGroup[thirdIndex].value);
+
+            // For any triplet, the indices must be distinct and the suits must all match
+            if ((firstIndex != secondIndex && firstIndex != thirdIndex && secondIndex != thirdIndex && 
+            tileGroup[firstIndex].suit == tileGroup[secondIndex].suit && 
+            tileGroup[firstIndex].suit == tileGroup[thirdIndex].suit && 
+            tileGroup[secondIndex].suit == tileGroup[thirdIndex].suit) &&
+            
+            // Either all three values match, which forms a pong
+            (tileGroup[firstIndex].value == tileGroup[secondIndex].value && 
+            tileGroup[firstIndex].value == tileGroup[thirdIndex].value && 
+            tileGroup[secondIndex].value == tileGroup[thirdIndex].value) ||
+            
+            // Or the values are sequential, which forms a chow
+            // Values must be distinct
+            (tileGroup[firstIndex].value != tileGroup[secondIndex].value && 
+            tileGroup[firstIndex].value != tileGroup[thirdIndex].value && 
+            tileGroup[secondIndex].value != tileGroup[thirdIndex].value &&
+            // Check for consecutive values by making sure max and min differ by 2
+            maxValue - minValue == 2)) {
+              // Mark indices for grouped tiles as winning
+              markedTiles[firstIndex] = true;
+              markedTiles[secondIndex] = true;
+              markedTiles[thirdIndex] = true;
+              // Recursive call; we have already found a pair by this point
+              if (backtrackingCheck(tileGroup, markedTiles, true)) {
+                return true;
+              }
+              // Otherwise we didn't find a win, so we unmark those indices
+              markedTiles[firstIndex] = false;
+              markedTiles[secondIndex] = false;
+              markedTiles[thirdIndex] = false;
+            }
+          }
+        }
+      }
+    });
+  }
   return false;
 }
 
