@@ -101,6 +101,31 @@ function drawTile(deck) {
   return deck.pop();
 }
 
+// Check if three tiles form a pong or chow
+function checkForTriplets(tiles, minValue, maxValue) {
+  // Exactly 3 tiles
+  if (tiles.length != 3) {
+    return false;
+  } else {
+    return (tiles[0].suit == tiles[1].suit && 
+      tiles[0].suit == tiles[2].suit && 
+      tiles[1].suit == tiles[2].suit) &&
+      
+      // Either all three values match, which forms a pong
+      ((tiles[0].value == tiles[1].value && 
+        tiles[0].value == tiles[2].value && 
+        tiles[1].value == tiles[2].value) ||
+      
+      // Or the values are sequential, which forms a chow
+      // Values must be distinct
+      (tiles[0].value != tiles[1].value && 
+        tiles[0].value != tiles[2].value && 
+        tiles[1].value != tiles[2].value &&
+      // Check for consecutive values by making sure max and min differ by 2
+      maxValue - minValue == 2))
+  }
+}
+
 // Checks if a tileGroup is a winning hand
 function checkForWinningHand(tileGroup) {
   // Hand must have 14 tiles
@@ -123,11 +148,11 @@ function backtrackingCheck(tileGroup, markedTiles, pairAlreadyFound) {
     for (let firstIndex = 0; firstIndex < tileGroup.length; firstIndex++) {
       // For each tile, check if it has a twin
       // No need to look at previous elements because those have already been paired
-      for (let secondIndex = firstIndex; secondIndex < tileGroup.length; secondIndex++) {
+      for (let secondIndex = firstIndex + 1; secondIndex < tileGroup.length; secondIndex++) {
         // Exclude tiles which have already been marked as winning
         if (!markedTiles[firstIndex] && !markedTiles[secondIndex]) {
-          // If the tiles are unique (different index) and match suit and value, they are twins
-          if (firstIndex != secondIndex && tileGroup[firstIndex].suit == tileGroup[secondIndex].suit && tileGroup[firstIndex].value == tileGroup[secondIndex].value) {
+          // If the tiles match suit and value they are twins
+          if (tileGroup[firstIndex].suit == tileGroup[secondIndex].suit && tileGroup[firstIndex].value == tileGroup[secondIndex].value) {
             // Mark indices for paired tiles as winning
             markedTiles[firstIndex] = true;
             markedTiles[secondIndex] = true;
@@ -145,32 +170,19 @@ function backtrackingCheck(tileGroup, markedTiles, pairAlreadyFound) {
   } else {
     // Otherwise, look for triplets
     for (let firstIndex = 0; firstIndex < tileGroup.length; firstIndex++) {
-      for (let secondIndex = firstIndex; secondIndex < tileGroup.length; secondIndex++) {
-        for (let thirdIndex = secondIndex; thirdIndex < tileGroup.length; thirdIndex++) {
+      for (let secondIndex = firstIndex + 1; secondIndex < tileGroup.length; secondIndex++) {
+        for (let thirdIndex = secondIndex + 1; thirdIndex < tileGroup.length; thirdIndex++) {
           // Exclude tiles which have already been marked as winning
           if (!markedTiles[firstIndex] && !markedTiles[secondIndex] && !markedTiles[thirdIndex]) {
             // Save min and max values to check for sequential values
             const minValue = Math.min(tileGroup[firstIndex].value, tileGroup[secondIndex].value, tileGroup[thirdIndex].value);
             const maxValue = Math.max(tileGroup[firstIndex].value, tileGroup[secondIndex].value, tileGroup[thirdIndex].value);
 
-            // For any triplet, the indices must be distinct and the suits must all match
-            if ((firstIndex != secondIndex && firstIndex != thirdIndex && secondIndex != thirdIndex && 
-            tileGroup[firstIndex].suit == tileGroup[secondIndex].suit && 
-            tileGroup[firstIndex].suit == tileGroup[thirdIndex].suit && 
-            tileGroup[secondIndex].suit == tileGroup[thirdIndex].suit) &&
-            
-            // Either all three values match, which forms a pong
-            ((tileGroup[firstIndex].value == tileGroup[secondIndex].value && 
-            tileGroup[firstIndex].value == tileGroup[thirdIndex].value && 
-            tileGroup[secondIndex].value == tileGroup[thirdIndex].value) ||
-            
-            // Or the values are sequential, which forms a chow
-            // Values must be distinct
-            (tileGroup[firstIndex].value != tileGroup[secondIndex].value && 
-            tileGroup[firstIndex].value != tileGroup[thirdIndex].value && 
-            tileGroup[secondIndex].value != tileGroup[thirdIndex].value &&
-            // Check for consecutive values by making sure max and min differ by 2
-            maxValue - minValue == 2))) {
+            // Make an array for each triplet to be checked
+            const triplet = [tileGroup[firstIndex], tileGroup[secondIndex], tileGroup[thirdIndex]];
+
+            // For any triplet, the suits must all match
+            if (checkForTriplets(triplet, minValue, maxValue)) {
               // Mark indices for grouped tiles as winning
               markedTiles[firstIndex] = true;
               markedTiles[secondIndex] = true;
@@ -199,11 +211,15 @@ const App = () => {
   shuffleArray(initialDeck);
 
   // Test for winning hand
-  /*const [p1hand, setp1hand] = useState([tilesArr[0], tilesArr[0],
+  /*let testArray = [tilesArr[0], tilesArr[0],
     tilesArr[1], tilesArr[1], tilesArr[1],
-    tilesArr[8], tilesArr[8], tilesArr[8],
-    tilesArr[9], tilesArr[10], tilesArr[11],
-    tilesArr[20], tilesArr[21], tilesArr[22]]);*/
+    tilesArr[10], tilesArr[11], tilesArr[12],
+    tilesArr[11], tilesArr[12], tilesArr[13],
+    tilesArr[20], tilesArr[21], tilesArr[22]];
+  shuffleArray(testArray);
+  console.log(testArray);*/
+
+  //const [p1hand, setp1hand] = useState(testArray);
   const [p1hand, setp1hand] = useState(drawHand(initialDeck));
   const [p2hand, setp2hand] = useState(drawHand(initialDeck));
   const [p3hand, setp3hand] = useState(drawHand(initialDeck));
