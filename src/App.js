@@ -285,9 +285,12 @@ const Tile = ({src, location, index, tileUseStates, deck, isGameActive}) => {
       tileUseStates.setTileGroups[4](tileUseStates.tileGroups[4].concat(tileUseStates.tileGroups[0][index]));
       // Removes the newly played tile from p1hand and draws a new tile if possible
       tileUseStates.setTileGroups[0]([...tileUseStates.tileGroups[0].slice(0, index), ...tileUseStates.tileGroups[0].slice(index + 1), drawTile(deck)]);
+      // Return false to mitigate warning for React state update on an unmounted component (from react-draggable)
+      return false;
     } else {
       // Snap tile back to starting position
       setControlledPosition({x: 0, y: 0});
+      return true;
     }
   };
 
